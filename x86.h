@@ -2,7 +2,7 @@
 #define X86_H
 #include "type.h"
 
-void outb(uint16_t port, uint8_t data)
+void static outb(uint16_t port, uint8_t data)
 {
     __asm__ volatile("outb %0, %1"
                      :
@@ -11,12 +11,12 @@ void outb(uint16_t port, uint8_t data)
 }
 
 // dummy write to get a 1ms~4ms delay
-void io_wait(void)
+void static io_wait(void)
 {
     outb(0x80, 0);
 }
 
-uint8_t inb(uint16_t port)
+uint8_t static inb(uint16_t port)
 {
     uint8_t ret;
     __asm__ volatile("inb %1, %0"
@@ -25,7 +25,7 @@ uint8_t inb(uint16_t port)
     return ret;
 }
 
-uint16_t is_interrupt_enabled()
+uint16_t static is_interrupt_enabled()
 {
     uint16_t flags;
     // PSW flag resgiter, Program Status Word, 16 bit

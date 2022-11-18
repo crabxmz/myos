@@ -1,18 +1,26 @@
 ENTRY(main)
 /* emulation(elf_i386) */
-INPUT(kernel_entry.o entry.o isr_wrapper.o)
+INPUT(kernel_entry.o 
+      entry.o 
+      isr_wrapper.o
+      mmu.o)
 OUTPUT(kernel.bin)
 OUTPUT_FORMAT(binary)
 
  /* the code should be relocated to 3GB + 1MB */
-. = 0xC0001000
 
 SECTIONS
 {
-  . = 0x1000;
+  /* .text :
+  {
+    mmu.o(.text)
+  } */
+      . = 0x1000;
+    
   .text ALIGN (0x1000) : 
-  { 
-    kernel_entry.o(.text)
+  {
+    kernel_entry.o(.text) /*must be first?*/
+    mmu.o(.text)
     entry.o(.text) 
     isr_wrapper.o(.text)
   }

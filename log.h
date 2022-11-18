@@ -4,13 +4,13 @@
 #include "x86.h"
 #define SERIAL_PORT (0x03f8)
 
-void putchar(char x)
+void static putchar(char x)
 {
     outb(SERIAL_PORT, (uint8_t)x);
     // io_wait();
 }
 
-void print(const char *a)
+void static print(const char *a)
 {
     for (; *a != '\0'; a++)
     {
@@ -19,7 +19,7 @@ void print(const char *a)
 }
 
 
-void printhex(uint8_t a)
+void static printhex(uint8_t a)
 {
     if (a < 0xa)
     {
@@ -35,7 +35,7 @@ void printhex(uint8_t a)
     }
 }
 
-void println(char *a)
+void static println(char *a)
 {
     int i = 0;
     while (a[i])
@@ -45,7 +45,7 @@ void println(char *a)
     print("\n\r");
 }
 
-void printuint32(uint32_t a)
+void static printuint32(uint32_t a)
 {
     int i = 8;
     uint32_t m = 0xf0000000;
@@ -56,7 +56,7 @@ void printuint32(uint32_t a)
     }
 }
 
-int strlen(char *a)
+int static strlen(char *a)
 {
     int i = 0;
     while (*a)

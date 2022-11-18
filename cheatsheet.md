@@ -18,3 +18,6 @@ qemu-system-i386  -device help
 
 # keyboard driver
 https://android.googlesource.com/platform/external/qemu-pc-bios/+/80e81e424e98b6646f3c7f3420f7bad4dc308a08/bochs/bios/rombios.c
+
+# LMA and VMA
+objdump -h entry.o
