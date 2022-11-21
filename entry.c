@@ -1,20 +1,8 @@
 #include "type.h"
 #include "x86.h"
 #include "log.h"
-#include "idt.h"
+#include "idt.h" // make sure paging is after idt, so that, idt table is linked into fisrt 1M memory
 #include "paging.h"
-
-void access_mem(uint32_t addr) // pysical memory range access test
-{
-    uint8_t *byte = (uint8_t *)addr;
-    uint8_t old = *byte;
-    printuint32((uint32_t)byte);
-    println(" access addr");
-    *byte = 0x66;
-    printuint32(*byte);
-    uint8_t new = *byte;
-    println(" write to addr");
-}
 
 int main()
 {
@@ -22,10 +10,7 @@ int main()
     init_interrupt();
     // init_ps2();   // why it is no use ?
 
-    printuint32((uint32_t)init_mmu);
-    println(" init_mmu");
     init_mmu();
-    access_mem(0x100000);
     println("exit kernel");
     return 0;
 }

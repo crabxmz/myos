@@ -15,9 +15,9 @@
 
 	mov bp, 0x9000
 	mov sp, bp
-	
+
 	mov bx, KERNEL_OFFSET
-	call load_kernel             ; load_kernel(bx: kernel offset)
+	call load_kernel             ; load_kernel(bx: dst physical memory start addr)
 	
 	mov si, KERNEL_LOADED
 	call PrintString
@@ -49,7 +49,7 @@ BEGIN_32BIT:
 	jmp $                        ; loop in case kernel returns
 	
 	BOOT_DRIVE db 0
-	DISK_SEC_NUM db 25
+	DISK_SEC_NUM db 18
 	;BOOT_INFO db "Boot drive index is ", 0xd, 0xa, 0
 	KERNEL_LOADED db "Kernel loaded...", 0xa, 0xd, 0
 	LERNEL_STARTED db "Kernel is about to start...", 0xa, 0xd, 0

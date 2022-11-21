@@ -4,20 +4,19 @@
 #include "x86.h"
 #define SERIAL_PORT (0x03f8)
 
-void static putchar(char x)
+void static inline putchar(char x)
 {
     outb(SERIAL_PORT, (uint8_t)x);
     // io_wait();
 }
 
-void static print(const char *a)
+void static inline print(const char *a)
 {
     for (; *a != '\0'; a++)
     {
         putchar(*a);
     }
 }
-
 
 void static printhex(uint8_t a)
 {
@@ -54,6 +53,14 @@ void static printuint32(uint32_t a)
         printhex((uint8_t)((a & m) >> (i * 4)));
         m >>= 4;
     }
+}
+
+void static inline print_str_and_uint32(const char *a,uint32_t x)
+{
+    print(a);
+    putchar(' ');
+    printuint32(x);
+    println("");
 }
 
 int static strlen(char *a)

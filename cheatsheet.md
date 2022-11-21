@@ -21,3 +21,6 @@ https://android.googlesource.com/platform/external/qemu-pc-bios/+/80e81e424e98b6
 
 # LMA and VMA
 objdump -h entry.o
+
+# qemu cpu reset debug
+`-no-reboot -d cpu_reset`

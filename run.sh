@@ -1,4 +1,4 @@
-qemu-system-i386 -m 1G  -usb  -device usb-kbd  -drive format=raw,file=myos.img  -nographic -no-reboot
+/home/hitler/Desktop/qemu/build/qemu-system-i386 -m 1G  -usb  -drive format=raw,file=myos.img  -nographic -d cpu_reset
 # qemu-system-i386  -serial stdio  -drive format=raw,file=myos.img  -nographic
 # qemu-system-i386  -drive format=raw,file=myos.img  -nographic 
 # qemu-system-i386  -drive format=raw,file=myos.img  -nographic -d int
