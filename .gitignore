@@ -3,4 +3,5 @@
 *.img
 .vscode/
 *.txt
+*.map
 .gdb_history

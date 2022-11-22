@@ -1,13 +1,13 @@
 #include "paging.h"
+#include "page_frame_alloc.h"
 
-__attribute__((aligned(4096))) pd_entry page_directory[1024];
 __attribute__((aligned(4096))) page_table g_page_table[1024];
+__attribute__((aligned(4096))) pd_entry page_directory[1024];
 
 void read_mem(uint32_t addr) // pysical memory range access test
 {
     uint8_t *byte = (uint8_t *)addr;
-    printuint32((uint32_t)byte);
-    println("read addr");
+    print_str_and_uint32("read addr", addr);
 }
 
 void write_mem(uint32_t addr) // pysical memory range access test
@@ -17,13 +17,90 @@ void write_mem(uint32_t addr) // pysical memory range access test
     print_str_and_uint32("write to addr, expected 0x66, now its value is", *byte);
 }
 
+uint32_t check_a_page(uint32_t virtual)
+{
+    if ((virtual & 0xfff))
+    {
+        println("addr not align to 4k");
+        return 0;
+    }
+    uint32_t pd_offset = PTD_OFFSET(virtual);
+    uint32_t pe_offset = PTE_OFFSET(virtual);
+    uint32_t *pt = (uint32_t *)&g_page_table[pd_offset];
+    uint32_t *pd = (uint32_t *)page_directory;
+    if (!(pd[pd_offset] & 1))
+    {
+        print_str_and_uint32("pd entry not exist for addr", virtual);
+    }
+    else if (!(pt[pe_offset] & 1))
+    {
+        print_str_and_uint32("pt entry not exist", virtual);
+    }
+    else if (pd[pd_offset] != (uint32_t)pt)
+    {
+        print_str_and_uint32("pd entry not match pt for addr", virtual);
+    }
+    else
+    {
+        print_str_and_uint32("virtual", virtual);
+        print_str_and_uint32("physical", pt[pe_offset] & 0xfffff000);
+    }
+}
+
+void map_a_page(uint32_t virtual, uint32_t physical)
+{
+    if ((virtual & 0xfff) || (physical & 0xfff))
+    {
+        println("addr not align to 4k");
+        return;
+    }
+    // else if (check_a_page(virtual))
+    // {
+    //     print_str_and_uint32("already mapped virtaul addr", virtual);
+    //     return;
+    // }
+    // print_str_and_uint32("map_a_page", (uint32_t)map_a_page);
+
+    uint32_t pd_offset = PTD_OFFSET(virtual);
+    uint32_t pe_offset = PTE_OFFSET(virtual);
+    uint32_t *pt = (uint32_t *)&g_page_table[pd_offset];
+    uint32_t *pd = (uint32_t *)page_directory;
+    pd[pd_offset] = (uint32_t)pt | 3;
+    pt[pe_offset] = physical | 3;
+}
+
+void unmap_a_page(uint32_t virtual)
+{
+    if ((virtual & 0xfff))
+    {
+        println("addr not align to 4k");
+        return;
+    }
+    print_str_and_uint32("unmap_a_page", (uint32_t)unmap_a_page);
+
+    uint32_t pd_offset = PTD_OFFSET(virtual);
+    uint32_t pe_offset = PTE_OFFSET(virtual);
+    uint32_t *pt = (uint32_t *)&g_page_table[pd_offset];
+    uint32_t *pd = (uint32_t *)page_directory;
+
+    if (check_a_page(virtual))
+    {
+        pt[pe_offset] = 0;
+    }
+}
+
 void init_mmu()
 {
-    page_table *pt = &g_page_table[PTD_OFFSET(0x0)];
-    *((uint32_t *)(&page_directory[PTD_OFFSET(0x0)])) = (uint32_t)pt | 1; // bit-0 must set to 1 (Present)
-    print_str_and_uint32("pt[0] addr", (uint32_t)(&pt[PTE_OFFSET(0)]));
-    print_str_and_uint32("page dir addr", (uint32_t)page_directory);
-    identity_paging((uint32_t *)pt, 0, 1024 * 1024 * 4); // virtual 0~1024 -> physical 0~1024
+    uint32_t *pd = (uint32_t *)page_directory;
+
+    uint32_t pd_offset = PTD_OFFSET(0x0);
+    uint32_t pe_offset = PTE_OFFSET(0);
+    uint32_t *pt = (uint32_t *)&g_page_table[pd_offset];
+
+    pd[pd_offset] = (uint32_t)pt | 1;        // bit-0 must set to 1 (Present)
+    identity_paging(pt, 0, 1024 * 1024 * 4); // virtual 0~1024 -> physical 0~1024
+                                             // print_str_and_uint32("pt[0] addr", (uint32_t)(&pt[pe_offset]));
+                                             // print_str_and_uint32("page dir addr", (uint32_t)page_directory);
 
     // if idt is not in fisrt 1M we need extra paging
     /*
@@ -32,6 +109,15 @@ void init_mmu()
         *((uint32_t *)(&page_directory[PTD_OFFSET(idt_addr)])) = (uint32_t)pt | 3;
         identity_paging((uint32_t *)pt, idt_addr & 0xffc00000, 1024 * 1024 * 4);
     */
+    // map pd
+    map_a_page((uint32_t)pd, (uint32_t)pd);
+    uint32_t i = (uint32_t)g_page_table;
+    int pt_num = 1024;
+    while (pt_num--)
+    {
+        map_a_page(i, i);
+        i += 0x1000;
+    }
 
     /*
     out kernel start at 0x00001000 pysical addr
@@ -41,15 +127,10 @@ void init_mmu()
 
     when cr0's 31-bit is set , all the address access is virtual and will go through mmu
     */
-    // test_addr(0);
-    // test_addr(idt_addr);
 
     enable_paging();
     println("i made mmu!");
 }
-
-__attribute__((aligned(4096))) pd_entry page_directory[1024];
-__attribute__((aligned(4096))) page_table g_page_table[1024];
 
 uint32_t inline get_page_dir_addr()
 {
@@ -96,92 +177,6 @@ void static identity_paging(uint32_t *first_pte, uint32_t from, uint32_t size)
     }
 } // maybe need init pte also
 
-void static printcr0()
-{
-    uint32_t cr0;
-    __asm__("mov %cr0, %ebx");
-    __asm__("mov %%ebx, %0"
-            : "=g"(cr0));
-    printuint32(cr0);
-    println(" cr0");
-}
-void static printcr1()
-{
-    uint32_t cr1;
-    __asm__("mov %cr1, %ebx");
-    __asm__("mov %%ebx, %0"
-            : "=g"(cr1));
-    printuint32(cr1);
-    println(" cr1");
-}
-void static printcr2()
-{
-    uint32_t cr2;
-    __asm__("mov %cr2, %ebx");
-    __asm__("mov %%ebx, %0"
-            : "=g"(cr2));
-    printuint32(cr2);
-    println(" cr2");
-}
-void static printcr3()
-{
-    uint32_t cr3;
-    __asm__("mov %%cr3, %0"
-            : "=r"(cr3));
-    printuint32(cr3);
-    println(" cr3");
-}
-void static printcr4()
-{
-    uint32_t cr4;
-    __asm__("mov %cr4, %ebx");
-    __asm__("mov %%ebx, %0"
-            : "=g"(cr4));
-    printuint32(cr4);
-    println(" cr4");
-}
-
-void static printeax()
-{
-    uint32_t eax;
-    __asm__("mov %%eax, %0"
-            : "=g"(eax));
-    printuint32(eax);
-    println(" eax");
-}
-
-void static test_addr(uint32_t addr)
-{
-    println("***");
-    printuint32(addr);
-    println(" test addr");
-    uint32_t pd_offset = addr >> 22;
-    uint32_t pt_addr = ((uint32_t *)page_directory)[pd_offset] & 0xfffff000;
-    printuint32(pd_offset);
-    println(" pd_offset");
-
-    printuint32(pt_addr);
-    println(" pt addr");
-
-    printuint32((uint32_t)g_page_table[pd_offset]);
-    println(" calulated pt addr");
-
-    uint32_t pt_offset = PTE_OFFSET(addr);
-    printuint32(pt_offset);
-    println(" pt_offset");
-
-    uint32_t pf_addr = ((uint32_t *)pt_addr)[pt_offset] & 0xfffff000;
-    uint32_t *p = (uint32_t *)0x5000;
-    printuint32(pf_addr);
-    println(" pf_addr");
-
-    uint32_t pf_offset = addr & 0xfff;
-    printuint32(pf_offset);
-    println(" pf_offset");
-
-    println("***");
-}
-
 void static enable_paging()
 {
     // print_str_and_uint32("into enable_paging", (uint32_t)enable_paging);
@@ -200,41 +195,31 @@ void static enable_paging()
     __asm__("mov %eax, %cr0");
 }
 
-void v2p(uint32_t vaddr)
+void map_vaddr_4k(uint32_t vaddr)
 {
-    uint32_t ptd_offset = PTD_OFFSET(vaddr);
-    uint32_t pte_offset = PTE_OFFSET(vaddr);
-    uint32_t pf_offset = PF_OFFSET(vaddr);
-    uint32_t *ptd_addr = (uint32_t *)page_directory;
-    uint32_t pt_addr = ptd_addr[ptd_offset];
+    // print_str_and_uint32("map_vaddr_4k", (uint32_t)map_vaddr_4k);
+    vaddr &= 0xfffff000;
 
-    if ((pt_addr & 1) == 0)
+    if (vaddr >= HIGH_ADDR_START)
     {
-        println("pt_addr not present");
+        map_a_page(vaddr, vaddr - HIGH_ADDR_START);
+        return;
     }
-    pt_addr &= 0xfffff000;
 
-    print_str_and_uint32("ptd_offset", (uint32_t)ptd_offset);
-    print_str_and_uint32("pte_offset", (uint32_t)pte_offset);
-    print_str_and_uint32("ptd_addr", (uint32_t)page_directory);
-    print_str_and_uint32("global pt addr", (uint32_t)g_page_table);
-    print_str_and_uint32("size of global pt addr", sizeof(g_page_table));
-    print_str_and_uint32("pt0 addr", (uint32_t)g_page_table[0]);
-    print_str_and_uint32("pt1 addr", (uint32_t)g_page_table[1]);
-    print_str_and_uint32("pt2 addr", (uint32_t)g_page_table[2]);
-    print_str_and_uint32("pt1023 addr", (uint32_t)g_page_table[1023]);
-    print_str_and_uint32("pt_addr", pt_addr);
-    print_str_and_uint32("calculated pt_addr", (uint32_t)g_page_table[ptd_offset] & 0xfffff000);
+    uint32_t *page_table_ptr = (uint32_t *)&g_page_table[PTD_OFFSET(vaddr)];
+    uint32_t *page_dir_ptr = (uint32_t *)&page_directory;
 
-    uint32_t pf_addr = ((uint32_t *)pt_addr)[pte_offset];
-
-    if ((pf_addr & 1) == 0)
+    uint32_t new_page_frame_addr = 0;
+    alloc_page(&new_page_frame_addr, 0x1000);
+    if (!new_page_frame_addr)
     {
-        println("pf_addr not present");
+        println("alloc page frame failed");
+        while (1)
+            ; // panic
     }
-    pf_addr &= 0xfffff000;
-
-    print_str_and_uint32("pf_addr", pf_addr);
-    print_str_and_uint32("calculated pf_addr", ((uint32_t *)g_page_table[ptd_offset])[pte_offset] & 0xfffff000);
-    print_str_and_uint32("physical_addr", pf_addr + pf_offset);
+    else
+    {
+        print_str_and_uint32("success alloc page frame addr", new_page_frame_addr);
+    }
+    map_a_page(vaddr, new_page_frame_addr);
 }

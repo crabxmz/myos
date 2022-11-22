@@ -16,10 +16,26 @@ gdt_data:
 	dw 0xffff                    ; SegLimit[15:0]
 	dw 0x0                       ; SegBase[15:0]
 	db 0x0                       ; SegBase[23:16]
-	db 10010010b                 ; P=0 DPL=00 1=1 Type=1 E=0 W=1 A=0
+	db 10010010b                 ; P=0 DPL=00 1=1 Type=0 E=0 W=1 A=0
+	db 11001111b                 ; G=1 D=1 L=0 AVL=0 SegLimit[19:16]=1111
+	db 0x0                       ; SegBase[31:24]
+
+gdt_user_code:
+	dw 0xffff                    ; SegLimit[15:0]
+	dw 0x0                       ; SegBase[15:0]
+	db 0x0                       ; SegBase[23:16]
+	db 11111010b                 ; P=0 DPL=00 1=1 Type=1 C=0 R=1 A=0
 	db 11001111b                 ; G=1 D=1 L=0 AVL=0 SegLimit[19:16]=1111
 	db 0x0                       ; SegBase[31:24]
 	
+gdt_user_data:
+	dw 0xffff                    ; SegLimit[15:0]
+	dw 0x0                       ; SegBase[15:0]
+	db 0x0                       ; SegBase[23:16]
+	db 11110010b                 ; P=0 DPL=00 1=1 Type=1 E=0 W=1 A=0
+	db 11001111b                 ; G=1 D=1 L=0 AVL=0 SegLimit[19:16]=1111
+	db 0x0                       ; SegBase[31:24]
+
 gdt_end:
 	
 	; GDT descriptor
@@ -29,7 +45,8 @@ gdt_descriptor:
 	
 	CODE_SEG equ gdt_code - gdt_start
 	DATA_SEG equ gdt_data - gdt_start
-	
+	USER_CODE_SEG equ gdt_user_code - gdt_start
+	USER_DATA_SEG equ gdt_user_data - gdt_start
 	; load GDT and go into protection mode
 	
 	[bits 16]

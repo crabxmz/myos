@@ -4,6 +4,9 @@
 #define PTD_OFFSET(vaddr) (vaddr >> 22)
 #define PTE_OFFSET(vaddr) ((vaddr >> 12) & 0x3ff)
 #define PF_OFFSET(vaddr) (vaddr & 0xfff)
+
+#define HIGH_ADDR_START (0xC0100000)
+
 typedef struct
 {
     uint32_t addr : 20;
@@ -45,6 +48,8 @@ void static printcr1();
 void static printcr0();
 void static identity_paging(uint32_t *first_pte, uint32_t from, uint32_t size);
 void static is_pae_enabled();
+void map_vaddr_4k(uint32_t vaddr);
+void map_a_page(uint32_t vaddr,uint32_t paddr);
 uint32_t inline get_page_dir_addr();
 uint32_t inline get_first_page_table_addr();
 

@@ -1,5 +1,6 @@
 #include "idt.h"
 #include "pic.h"
+#include "paging.h"
 
 extern void interrupt_handler_0();
 extern void interrupt_handler_1();
@@ -235,6 +236,15 @@ void interrupt_request_handler(cpu_state _cpu_state, uint32_t _int_no, stack_sta
     pic_send_eoi(_int_no);
 }
 
+void handle_page_fault()
+{
+    uint32_t access_addr;
+    __asm__ volatile("mov %%cr2,%0"
+                     : "=r"(access_addr));
+    print_str_and_uint32("page fault addr", access_addr);
+    map_vaddr_4k(access_addr);
+}
+
 void isr_handler(cpu_state _cpu_state, uint32_t _isr_no, stack_state _stack_state)
 {
     printuint32(_isr_no);
@@ -243,8 +253,8 @@ void isr_handler(cpu_state _cpu_state, uint32_t _isr_no, stack_state _stack_stat
     switch (_isr_no)
     {
     case 0xe:
-        printuint32(_stack_state.error_code);
-        println(" page fault error code");
+        print_str_and_uint32("page fault error code", _stack_state.error_code);
+        handle_page_fault();
         break;
 
     default:

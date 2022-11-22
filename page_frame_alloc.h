@@ -1,7 +1,10 @@
 #ifndef PAGE_FRAME_ALLOC
 #define PAGE_FRAME_ALLOC
 
-#define BASE_ADDR (0xa00000)
+#include "memory.h"
+#include "type.h"
+
+#define BASE_ADDR ((((uint32_t)kernel_end) & 0xfffff000) + 0x1000)
 
 #define PAGE_SIZE (4096)
 #define MSB (31)
@@ -10,7 +13,7 @@
 #define BOTTOM_META_BYTES ((BOTTOM_NODE_NUM) / 8)
 
 /*
-2^0 + 2^1 + 2^2 ... 
+2^0 + 2^1 + 2^2 ...
 TODO: bottom block is at least 4096,no need to split to 1 bit
 */
 #define TOT_META_BYTES ((BOTTOM_META_BYTES)*2 - 1)
@@ -33,7 +36,7 @@ typedef struct
     unsigned char meta[TOT_META_BYTES];
 } buddy_allocator;
 
-uint32_t alloc_page(uint32_t *res, buddy_allocator *this, uint32_t size);
-void free_4k_page(buddy_allocator *this, uint32_t addr_to_free);
+uint32_t alloc_page(uint32_t *res, uint32_t size);
+void free_4k_page(uint32_t addr_to_free);
 
 #endif
