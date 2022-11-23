@@ -242,7 +242,16 @@ void handle_page_fault()
     __asm__ volatile("mov %%cr2,%0"
                      : "=r"(access_addr));
     print_str_and_uint32("page fault addr", access_addr);
-    map_vaddr_4k(access_addr);
+    if (access_addr >= HIGH_ADDR_START)
+    {
+        print_str_and_uint32("access addr",access_addr);
+        print_str_and_uint32("physical addr",access_addr - HIGH_ADDR_START);
+        map_a_page(access_addr, access_addr - HIGH_ADDR_START);
+    }
+    else
+    {
+        map_vaddr_4k(access_addr);
+    }
 }
 
 void isr_handler(cpu_state _cpu_state, uint32_t _isr_no, stack_state _stack_state)

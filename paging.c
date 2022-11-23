@@ -1,5 +1,6 @@
 #include "paging.h"
 #include "page_frame_alloc.h"
+#include "memory.h"
 
 __attribute__((aligned(4096))) page_table g_page_table[1024];
 __attribute__((aligned(4096))) pd_entry page_directory[1024];
@@ -119,6 +120,8 @@ void init_mmu()
         i += 0x1000;
     }
 
+    // map_a_page((uint32_t)high_addr_start - HIGH_ADDR_START, (uint32_t)high_addr_start - HIGH_ADDR_START);
+
     /*
     out kernel start at 0x00001000 pysical addr
 
@@ -137,7 +140,7 @@ uint32_t inline get_page_dir_addr()
     return (uint32_t)&page_directory;
 }
 
-uint32_t inline get_first_page_table_addr()
+uint32_t get_first_page_table_addr()
 {
     return (uint32_t)&g_page_table[0];
 }

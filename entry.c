@@ -7,6 +7,11 @@
 
 extern void test_high(unsigned char data);
 
+void stub()
+{
+    print_str_and_uint32("stub", (uint32_t)stub);
+}
+
 int main()
 {
     println("kernel started..");
@@ -14,11 +19,14 @@ int main()
     // init_ps2();   // why it is no use ?
 
     init_mmu();
-    read_mem(0xc0000000);
-    write_mem(0xc0000001);
+    // read_mem(0xc0000000);
+    // write_mem(0xc0000001);
     print_str_and_uint32("kernel_end addr", (uint32_t)kernel_end);
+    print_str_and_uint32("high addr start", (uint32_t)high_addr_start);
     println("exit kernel");
-    // test_high(0x61);
+    print_str_and_uint32("test_high", (uint32_t)test_high);
+    stub();
+    test_high(0x61);
     return 0;
 }
 

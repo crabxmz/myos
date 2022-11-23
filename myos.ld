@@ -6,10 +6,11 @@ INPUT(
       isr_wrapper.o
       idt.o
       page_frame_alloc.o
+      log.o
       pic.o
       paging.o
       /* high_addr_entry.o */
-      )
+     )
 
 OUTPUT(kernel.bin)
 OUTPUT_FORMAT(binary)
@@ -29,6 +30,8 @@ SECTIONS
     isr_wrapper.o(.text)
     pic.o(.text)
     entry.o(.text)
+    x86.o(.text)
+    log.o(.text)
     paging.o(.text)
     page_frame_alloc.o(.text)
   }
@@ -42,6 +45,8 @@ SECTIONS
     isr_wrapper.o(.rodata)
     pic.o(.rodata)
     entry.o(.rodata)
+    log.o(.rodata)
+    x86.o(.rodata)
     paging.o(.rodata)
     page_frame_alloc.o(.rodata)
     /* *(.rodata) */
@@ -56,21 +61,25 @@ SECTIONS
     idt.o(.data)
     isr_wrapper.o(.data)
     pic.o(.data)
-    entry.o(.data) 
+    entry.o(.data)
+    x86.o(.data)
     paging.o(.data)
     page_frame_alloc.o(.data)
+    log.o(.data)
   }
 
   bss_start = .;
 
   .boot.bss :
-  { 
+  {
     kernel_entry.o(.bss)
     idt.o(.bss)
     page_frame_alloc.o(.bss)
     isr_wrapper.o(.bss)
     pic.o(.bss)
     entry.o(.bss) 
+    x86.o(.bss)
+    log.o(.bss)
     paging.o(.bss)
 
     kernel_entry.o(COMMON)
@@ -78,36 +87,39 @@ SECTIONS
     page_frame_alloc.o(COMMON)
     isr_wrapper.o(COMMON)
     pic.o(COMMON)
-    entry.o(COMMON) 
+    entry.o(COMMON)
+    x86.o(COMMON)
     paging.o(COMMON)
-    *(.bss)
-    *(COMMON)
+    log.o(COMMON)
+    /* *(.bss)
+    *(COMMON) */
   }
 
   kernel_end = .;
 
-  /* . += 0xC0100000;
+  . += 0xC0000000;
+  . = ALIGN (0x1000);
 
-  .text ALIGN (0x1000) : AT (ADDR (.text) - 0xC0100000)
+  high_addr_start = .;
+  .text ALIGN (0x1000) : AT (ADDR (.text) - 0xC0000000)
   {
     high_addr_entry.o(.text)
   }
 
-  .rodata ALIGN (0x1000) : AT (ADDR (.rodata) - 0xC0100000)
+  .rodata ALIGN (0x1000) : AT (ADDR (.rodata) - 0xC0000000)
   { 
     high_addr_entry.o(.rodata) 
   }
 
-  .data ALIGN (0x1000) : AT (ADDR (.data) - 0xC0100000)
+  .data ALIGN (0x1000) : AT (ADDR (.data) - 0xC0000000)
   { 
     high_addr_entry.o(.data)
   }
 
-  .bss ALIGN (0x1000) : AT (ADDR (.data) - 0xC0100000)
+  .bss ALIGN (0x1000) : AT (ADDR (.bss) - 0xC0000000)
   { 
-    high_addr_entry.o(.data)
-    high_addr_entry.o(COMMON)
-  } */
+    high_addr_entry.o(.bss)
+  }
 
   /DISCARD/ :
   {

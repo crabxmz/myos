@@ -93,6 +93,7 @@ typedef struct
     uint16_t high_offset; // offset bits 16..31
 } __attribute__((packed)) idt_gate_t;
 
-uint32_t inline get_idt_start_addr();
+uint32_t get_idt_start_addr();
+void init_interrupt();
 
 #endif

@@ -36,7 +36,7 @@ void irq_clear_mask(uint8_t IRQline);
 uint8_t irq_get_mask(uint8_t IRQline);
 void print_pic_masks();
 void pic_remap(uint32_t offset1, uint32_t offset2);
-void inline enable_interrupt();
-void inline disable_interrupt();
+void enable_interrupt();
+void disable_interrupt();
 
 #endif

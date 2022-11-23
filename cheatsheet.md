@@ -24,3 +24,6 @@ objdump -h entry.o
 
 # qemu cpu reset debug
 `-no-reboot -d cpu_reset`
+
+# compile for 32bit machine
+gcc -m32
