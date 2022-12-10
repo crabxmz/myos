@@ -1,0 +1,9 @@
+*.o
+*.bin
+*.img
+*.img.*
+.vscode/
+*.txt
+*.map
+.gdb_history
+*.log
