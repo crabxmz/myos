@@ -248,13 +248,12 @@ void handle_page_fault(uint32_t ec)
     __asm__ volatile("mov %%cr2,%0"
                      : "=r"(access_addr));
     print_str_and_uint32("page fault addr", access_addr);
-    uint8_t u_s_bit = (ec & (1 << 2));
+    uint8_t u_s_bit = (ec & (1u << 2));
     if (u_s_bit && (access_addr >= 0xc0000000))
     {
         panic("user mode access kernel mem");
     }
-    // map_a_page(ADDR_PAGE_ALIGN(access_addr), alloc_a_page(u_s_bit ? 3 : 0), u_s_bit);
-    map_a_page(ADDR_PAGE_ALIGN(access_addr), alloc_a_page(0), u_s_bit);
+    map_a_page(ADDR_PAGE_ALIGN(access_addr), alloc_a_page(u_s_bit ? 3 : 0), u_s_bit);
 }
 
 void isr_handler(cpu_state _cpu_state, uint32_t _isr_no, stack_state _stack_state)

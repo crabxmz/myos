@@ -1,8 +1,7 @@
 	[bits 32]
-	[extern irq_handler]
-	[extern isr_handler]
 	[extern interrupt_request_handler]
 	[extern isr_handler]
+	[extern syscall_interrupt_handler]
 	align 4
 
 	; The specific CPU interrupts that put an error code on the stack are 8, 10, 11, 12, 13, 14 and 17.
@@ -121,24 +120,7 @@ common_interrupt_handler:
 	; return to the code that got interrupted
 	sti
 	iret
-	
-	; no_error_code_interrupt_handler 0
-	; no_error_code_interrupt_handler 1
-	; no_error_code_interrupt_handler 2
-	; no_error_code_interrupt_handler 3
-	; no_error_code_interrupt_handler 4
-	; no_error_code_interrupt_handler 5
-	; no_error_code_interrupt_handler 6
-	; no_error_code_interrupt_handler 7
-	
-	; error_code_interrupt_handler 8
-	; no_error_code_interrupt_handler 9
-	; error_code_interrupt_handler 10
-	; error_code_interrupt_handler 11
-	; error_code_interrupt_handler 12
-	; error_code_interrupt_handler 13
-	; error_code_interrupt_handler 14
-	; no_error_code_interrupt_handler 15
+
 	no_error_code_interrupt_handler 0
 	no_error_code_interrupt_handler 1
 	no_error_code_interrupt_handler 2
@@ -155,3 +137,22 @@ common_interrupt_handler:
 	no_error_code_interrupt_handler 13
 	no_error_code_interrupt_handler 14
 	no_error_code_interrupt_handler 15
+
+; global syscall_interrupt_handler_wrapper:
+; 	; already on stack: ss, sp, flags, cs, ip.
+;     ; need to push ax, gs, fs, es, ds, -ENOSYS, bp, di, si, dx, cx, and bx
+;     push eax
+;     push dword gs
+;     push dword fs
+;     push dword es
+;     push dword ds
+;     push dword -78
+;     ;push dword -ENOSYS
+;     push ebp
+;     push edi
+;     push esi
+;     push edx
+;     push ecx
+;     push ebx
+;     push esp
+; 	call syscall_interrupt_handler
