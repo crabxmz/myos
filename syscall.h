@@ -1,0 +1,1 @@
+void syscall(unsigned int no);

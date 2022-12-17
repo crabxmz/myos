@@ -61,10 +61,12 @@ int main()
     test_user_function = init_p.eip;
     user_stack = init_p.esp;
     println("init_proc done");
-    print_str_and_uint32("user_process_esp", user_stack);
-    print_str_and_uint32("pt_768", ((uint32_t *)init_p.cr3)[768]);
-    print_str_and_uint32("pt_0", ((uint32_t *)init_p.cr3)[0]);
-    print_str_and_uint32("test_user_function", (uint32_t)test_user_function);
+
+    // print_str_and_uint32("user_process_esp", user_stack);
+    // print_str_and_uint32("pt_768", ((uint32_t *)init_p.cr3)[768]);
+    // print_str_and_uint32("pt_0", ((uint32_t *)init_p.cr3)[0]);
+    // print_str_and_uint32("test_user_function", (uint32_t)test_user_function);
+
     // use new page dir
     // __asm__ volatile("mov %0, %%cr3" ::"r"(init_p.cr3));
 
@@ -97,7 +99,14 @@ test for pic masks
 */
 
 /*
-test for pysical memory range
-    // read_mem(0xc0000000);
-    // write_mem(0xc1010101);
+void write_disk_test()
+{
+    uint8_t tmp_buf[512];
+    int i;
+    for (i = 0; i < 512; i++)
+    {
+        tmp_buf[i] = 0xff;
+    }
+    write_one_sector(tmp_buf, 0);
+}
 */

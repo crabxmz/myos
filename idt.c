@@ -231,9 +231,9 @@ void interrupt_request_handler(cpu_state _cpu_state, uint32_t _int_no, stack_sta
     }
     if (_int_no)
     {
-        print_str_and_uint32("int no", _int_no);
-        print_str_and_uint32("int depth", int_depth);
-        print_str_and_uint32("int ec",_stack_state.error_code);
+        // print_str_and_uint32("int no", _int_no);
+        // print_str_and_uint32("int depth", int_depth);
+        // print_str_and_uint32("int ec",_stack_state.error_code);
         // print_str_and_uint32("interrupt handler addr", (uint32_t)interrupt_request_handler);
         // DUMP_CPU(_cpu_state);
         // DUMP_ITR_STACK(_stack_state);
@@ -247,7 +247,7 @@ void handle_page_fault(uint32_t ec)
     uint32_t access_addr;
     __asm__ volatile("mov %%cr2,%0"
                      : "=r"(access_addr));
-    print_str_and_uint32("page fault addr", access_addr);
+    // print_str_and_uint32("page fault addr", access_addr);
     uint8_t u_s_bit = (ec & (1u << 2));
     if (u_s_bit && (access_addr >= 0xc0000000))
     {

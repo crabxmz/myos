@@ -20,7 +20,7 @@ void init_proc(process_t *proc, uint32_t disk_offset)
     {
         new_pd[i] = 0;
     }
-    print_str_and_uint32("new page dir", proc->cr3);
+    // print_str_and_uint32("new page dir", proc->cr3);
 
     // map kernel to high addr
     uint32_t *cur_pd;
@@ -36,13 +36,13 @@ void init_proc(process_t *proc, uint32_t disk_offset)
     __asm__ volatile("mov %0, %%cr3" ::"r"(proc->cr3));
 
     // load elf
-    println("----load user elf start");
+    // println("----load user elf start");
     proc->eip = load_user_elf(disk_offset);
-    println("----load user elf done");
+    // println("----load user elf done");
     // set stack page
-    println("map stack page");
+    // println("map stack page");
     proc->kstack_paddr = alloc_a_page(0);
     map_a_page(ADDR_PAGE_ALIGN(proc->esp), proc->kstack_paddr, 1 << 2);
 
-    print_str_and_uint32("V2P(0x400000)", V2P(0x400000, proc->cr3));
+    // print_str_and_uint32("V2P(0x400000)", V2P(0x400000, proc->cr3));
 }

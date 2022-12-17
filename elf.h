@@ -1,6 +1,6 @@
 #include "type.h"
 #define ELF_MAGIC 0x464C457Fu // "\x7FELF" in little endian
-#define ELF_DISK_OFFSET 5
+#define ELF_DISK_OFFSET 6
 #define ELF_MEM_OFFSET 0x1000
 #define SECTSIZE 512
 
