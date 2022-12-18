@@ -44,9 +44,8 @@
 // 3F6 (Read): Alternate Status Register
 // 3F6 (Write): Device Control Register
 
-void waitdisk(void);
-
-void read_one_sector(uint8_t *buf, uint32_t lab);
-void write_one_sector(uint8_t *buf, uint32_t lab);
+uint32_t waitdisk(void);
+uint32_t read_one_sector(uint8_t *buf, uint32_t lab);
+uint32_t write_one_sector(uint8_t *buf, uint32_t lab);
 
 #endif

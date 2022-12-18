@@ -46,21 +46,21 @@ uint16_t is_interrupt_enabled()
     return flags & (1 << 9);
 }
 
-void stosb(void *addr, int data, int cnt)
-{
-    asm volatile("cld; rep stosb"
-                 : "=D"(addr), "=c"(cnt)
-                 : "0"(addr), "1"(cnt), "a"(data)
-                 : "memory", "cc");
-}
+// void stosb(void *addr, int data, int cnt)
+// {
+//     asm volatile("cld; rep stosb"
+//                  : "=D"(addr), "=c"(cnt)
+//                  : "0"(addr), "1"(cnt), "a"(data)
+//                  : "memory", "cc");
+// }
 
-void insl(int port, void *addr, int cnt)
-{
-    asm volatile("cld; rep insl"
-                 : "=D"(addr), "=c"(cnt)
-                 : "d"(port), "0"(addr), "1"(cnt)
-                 : "memory", "cc");
-}
+// void insl(int port, void *addr, int cnt)
+// {
+//     asm volatile("cld; rep insl"
+//                  : "=D"(addr), "=c"(cnt)
+//                  : "d"(port), "0"(addr), "1"(cnt)
+//                  : "memory", "cc");
+// }
 
 // uint32_t get_gdt_base()
 // {

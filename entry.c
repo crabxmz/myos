@@ -57,7 +57,7 @@ int main()
     flush_tss();
     // for test
 
-    init_proc(&init_p, 38);
+    init_proc(&init_p, 41);
     test_user_function = init_p.eip;
     user_stack = init_p.esp;
     println("init_proc done");

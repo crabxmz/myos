@@ -1,14 +1,15 @@
 #include "disk.h"
 #include "x86.h"
-void waitdisk(void)
+uint32_t waitdisk(void)
 {
     // Wait for disk ready.
     while ((inb(0x1F7) & (IDE_BSY | IDE_DRDY)) != IDE_DRDY)
         ;
+    return 0;
 }
 
 // 28 bit LBA, PIO mode
-void read_one_sector(uint8_t *buf, uint32_t lab)
+uint32_t read_one_sector(uint8_t *buf, uint32_t lab)
 {
     waitdisk();
     // 0x1f0 ~ 0x1f7 : primary buss
@@ -32,9 +33,10 @@ void read_one_sector(uint8_t *buf, uint32_t lab)
         *(uint16_t *)buf = data;
         buf += sizeof(data);
     }
+    return 0;
 }
 
-void write_one_sector(uint8_t *buf, uint32_t lab)
+uint32_t write_one_sector(uint8_t *buf, uint32_t lab)
 {
     waitdisk();
     // 0x1f0 ~ 0x1f7 : primary buss
@@ -53,4 +55,5 @@ void write_one_sector(uint8_t *buf, uint32_t lab)
         outw(IDE_DATA_REG, data);
         buf += sizeof(data);
     }
+    return 0;
 }

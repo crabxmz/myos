@@ -15,8 +15,11 @@ gcc ${GCC_OPT} -m32 -ffreestanding  -o bitmap_allocator.o -c bitmap_allocator.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o disk.o -c disk.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o gdt.o -c gdt.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o process.o -c process.c
+gcc ${GCC_OPT} -m32 -ffreestanding  -o string.o -c string.c
+gcc ${GCC_OPT} -m32 -ffreestanding  -o block.o -c block.c
+gcc ${GCC_OPT} -m32 -ffreestanding  -o ext2.o -c ext2.c
 
 echo "link files now..."
 
-ld -m elf_i386  -T myos.ld -Map output.map
+ld -m elf_i386  -T myos.ld -Map myos.map
 echo "leave $0"

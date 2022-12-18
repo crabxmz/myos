@@ -60,16 +60,6 @@ void print_str_and_uint32(const char *a,uint32_t x)
     println("");
 }
 
-int strlen(char *a)
-{
-    int i = 0;
-    while (*a)
-    {
-        a++;
-        i++;
-    }
-    return i;
-}
 
 void stub()
 {

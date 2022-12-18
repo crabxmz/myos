@@ -13,7 +13,7 @@ __attribute__((always_inline)) inline void outw(uint16_t port, uint16_t data);
 
 uint16_t is_interrupt_enabled();
 
-void stosb(void *addr, int data, int cnt);
-void insl(int port, void *addr, int cnt);
+// void stosb(void *addr, int data, int cnt);
+// void insl(int port, void *addr, int cnt);
 // uint32_t get_gdt_base();
 #endif

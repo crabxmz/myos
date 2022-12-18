@@ -16,6 +16,9 @@ INPUT(
       elf.o
       gdt.o
       disk.o
+      string.o
+      block.o
+      ext2.o
      )
 
 OUTPUT(kernel.elf)
