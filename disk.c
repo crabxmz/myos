@@ -9,15 +9,15 @@ uint32_t waitdisk(void)
 }
 
 // 28 bit LBA, PIO mode
-uint32_t read_one_sector(uint8_t *buf, uint32_t lab)
+uint32_t read_one_sector(uint8_t *buf, uint32_t lba)
 {
     waitdisk();
     // 0x1f0 ~ 0x1f7 : primary buss
-    outb(IDE_DRV_REG, IDE_MASTER_DEV | ((lab >> 24) & 0x0F)); // 0xe0 master, and highest 4 bits of the LBA
+    outb(IDE_DRV_REG, IDE_MASTER_DEV | ((lba >> 24) & 0x0F)); // 0xe0 master, and highest 4 bits of the LBA
     outb(IDE_SEC_CNT_REG, 0x1);                               // sector count=1
-    outb(IDE_LBA_LOW_REG, lab & 0x000000ff);
-    outb(IDE_LBA_MID_REG, (lab & 0x0000ff00) >> 8);
-    outb(IDE_LBA_HIGH_REG, (lab & 0x00ff0000) >> 16);
+    outb(IDE_LBA_LOW_REG, lba & 0x000000ff);
+    outb(IDE_LBA_MID_REG, (lba & 0x0000ff00) >> 8);
+    outb(IDE_LBA_HIGH_REG, (lba & 0x00ff0000) >> 16);
     outb(IDE_CMD_REG_W, IDE_CMD_READ); //"READ SECTORS" command
     waitdisk();
 
@@ -36,15 +36,15 @@ uint32_t read_one_sector(uint8_t *buf, uint32_t lab)
     return 0;
 }
 
-uint32_t write_one_sector(uint8_t *buf, uint32_t lab)
+uint32_t write_one_sector(uint8_t *buf, uint32_t lba)
 {
     waitdisk();
     // 0x1f0 ~ 0x1f7 : primary buss
-    outb(IDE_DRV_REG, IDE_MASTER_DEV | ((lab >> 24) & 0x0F)); // 0xe0 master, and highest 4 bits of the LBA
+    outb(IDE_DRV_REG, IDE_MASTER_DEV | ((lba >> 24) & 0x0F)); // 0xe0 master, and highest 4 bits of the LBA
     outb(IDE_SEC_CNT_REG, 0x1);                               // sector count=1
-    outb(IDE_LBA_LOW_REG, lab & 0x000000ff);
-    outb(IDE_LBA_MID_REG, (lab & 0x0000ff00) >> 8);
-    outb(IDE_LBA_HIGH_REG, (lab & 0x00ff0000) >> 16);
+    outb(IDE_LBA_LOW_REG, lba & 0x000000ff);
+    outb(IDE_LBA_MID_REG, (lba & 0x0000ff00) >> 8);
+    outb(IDE_LBA_HIGH_REG, (lba & 0x00ff0000) >> 16);
     outb(IDE_CMD_REG_W, IDE_CMD_WRITE); // WRITE SECTORS" command
     waitdisk();
 

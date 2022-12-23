@@ -3,6 +3,7 @@
 #include "x86.h"
 #include "log.h"
 #include "disk.h"
+#include "string.h"
 
 void read_seg(uint32_t seg_disk_offset_in_bytes, uint32_t dst_paddr, uint32_t filesz, uint32_t elf_disk_sec_offset) // read program header
 {
@@ -131,6 +132,47 @@ uint32_t load_user_elf(uint32_t elf_disk_offset)
         // print_str_and_uint32("program_hdr filesz", src_program_hdr->filesz);
 
         read_seg(src_program_hdr->off, src_program_hdr->vaddr, src_program_hdr->filesz, elf_disk_offset);
+
+        if (src_program_hdr->memsz > src_program_hdr->filesz)
+        {
+            for (j = 0; j < src_program_hdr->memsz - src_program_hdr->filesz; j++)
+            {
+                uint8_t *d = (uint8_t *)(src_program_hdr->vaddr) + src_program_hdr->filesz;
+                d[j] = 0;
+            }
+        }
+    }
+
+    print_str_and_uint32("user entry is", (uint32_t)src_elf->entry);
+
+    return src_elf->entry;
+}
+
+uint32_t load_user_elf_from_buffer(uint8_t *buf)
+{
+    uint32_t i;
+
+    elfhdr *src_elf = (elfhdr *)buf;
+
+    if (src_elf->magic != ELF_MAGIC)
+    {
+        print_str_and_uint32("not a elf buf, magic num", src_elf->magic);
+        return;
+    }
+
+    proghdr *src_program_hdr = (proghdr *)((uint8_t *)src_elf + src_elf->phoff);
+
+    uint32_t ph_num = src_elf->phnum;
+
+    for (i = 0; i < ph_num; src_program_hdr++, i++)
+    {
+        if (src_program_hdr->type != ELF_PROG_LOAD)
+        {
+            continue;
+        }
+        int j;
+
+        memmove((uint8_t *)(src_program_hdr->vaddr), buf + src_program_hdr->off, src_program_hdr->filesz);
 
         if (src_program_hdr->memsz > src_program_hdr->filesz)
         {

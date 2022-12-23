@@ -6,6 +6,7 @@ INPUT(
       elf.o 
       grub.o
       disk.o
+      string.o
      )
 
 OUTPUT(grub.bin)

@@ -33,7 +33,7 @@
 #define S_ISSOCK(m) (((m)&S_IFMT) == S_IFSOCK)
 
 #define EXT2_BLOCK_SIZE 1024
-#define EXT2_SB_ID 0
+#define EXT2_BASE_OFFSET EXT2_BLOCK_SIZE
 #define EXT2_ROOT_INODE_ID 2
 #define EXT2_NDIR_BLOCKS 12
 #define EXT2_IND_BLOCK EXT2_NDIR_BLOCKS
@@ -43,7 +43,9 @@
 #define EXT2_NAME_LEN 255
 #define EXT2_GET_BLOCK_STATE(bitmap, x) ((bitmap)[x / 8] & (1u << (x % 8)))
 
-#define BASE_OFFSET EXT2_BLOCK_SIZE
+#define EXT2_FS_BLKID (25)
+#define EXT2_FIRST_SB_BLKID (EXT2_BASE_OFFSET / EXT2_BLOCK_SIZE)
+#define EXT2_FIRST_GD_BLKID (EXT2_FIRST_SB_BLKID + 1)
 
 typedef struct
 {
@@ -205,11 +207,15 @@ typedef struct
 void print_ext2_super_block(ext2_super_block *sb);
 void print_ext2_group_desc(ext2_group_desc *gd);
 void print_inode_table(ext2_inode *inode_table);
-void print_ext2_inode(ext2_inode *inode_table, ext2_inode *inode, int depth);
+void print_ext2_inode(ext2_inode *inode);
 
 uint32_t read_ext2_super_block(uint8_t *buf);
 uint32_t read_ext2_group_desc(uint8_t *buf, ext2_super_block *sb, uint32_t group_id);
 uint32_t read_ext2_inode_table(uint8_t *buf, ext2_super_block *sb, uint32_t group_id);
-uint32_t read_ext2_inode(uint8_t *buf, ext2_inode *inode_table, uint32_t inode_id);
+uint32_t read_ext2_inode(uint8_t *buf, ext2_super_block *sb, uint32_t inode_id);
 uint32_t read_ext2_data_block(uint8_t *buf, uint32_t block_id);
+uint32_t walk_dir(ext2_inode *inode);
+uint32_t read_file(uint8_t *buf, ext2_inode *inode);
+uint32_t get_inode(ext2_inode *inode, const char *name); // (parent inode, target dir name) => target dir inode number
+
 #endif

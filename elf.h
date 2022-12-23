@@ -1,6 +1,6 @@
 #include "type.h"
 #define ELF_MAGIC 0x464C457Fu // "\x7FELF" in little endian
-#define ELF_DISK_OFFSET 5
+#define ELF_DISK_OFFSET 7
 #define ELF_MEM_OFFSET 0x1000
 #define SECTSIZE 512
 
@@ -47,3 +47,4 @@ typedef struct
 
 void load_elf(uint32_t elf_disk_offset);
 uint32_t load_user_elf(uint32_t elf_disk_offset);
+uint32_t load_user_elf_from_buffer(uint8_t *buf);

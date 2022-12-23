@@ -49,7 +49,7 @@ BEGIN_32BIT:
 	jmp $                        ; loop in case kernel returns
 	
 	BOOT_DRIVE db 0
-	DISK_SEC_NUM db 53
+	DISK_SEC_NUM db 49
 	;BOOT_INFO db "Boot drive index is ", 0xd, 0xa, 0
 	KERNEL_LOADED db "Kernel loaded...", 0xa, 0xd, 0
 	LERNEL_STARTED db "Kernel is about to start...", 0xa, 0xd, 0

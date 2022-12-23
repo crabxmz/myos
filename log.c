@@ -52,7 +52,7 @@ void printuint32(uint32_t a)
     }
 }
 
-void print_str_and_uint32(const char *a,uint32_t x)
+void print_str_and_uint32(const char *a, uint32_t x)
 {
     print(a);
     putchar(' ');
@@ -60,8 +60,19 @@ void print_str_and_uint32(const char *a,uint32_t x)
     println("");
 }
 
-
 void stub()
 {
     print_str_and_uint32("stub", (uint32_t)stub);
+}
+
+void dump_mem(const uint8_t *a, uint32_t len)
+{
+    uint32_t i;
+    for (i = 0; i < len; i++)
+    {
+        printuint32(a[i]);
+        putchar(' ');
+    }
+        putchar('\n');
+
 }

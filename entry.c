@@ -8,6 +8,7 @@
 #include "process.h"
 #include "bitmap_allocator.h"
 #include "disk.h"
+#include "ext2.h"
 #include "paging.h"
 
 extern void jump_usermode();
@@ -18,28 +19,47 @@ __attribute__((aligned(PAGE_SIZE))) uint32_t page_table_768[1024] = {0};
 __attribute__((aligned(PAGE_SIZE))) uint32_t page_table_0[1024] = {0};
 process_t init_p;
 
-void move_pd()
-{
-    uint32_t *pd;
-    __asm__ volatile("mov %%cr3,%0"
-                     : "=g"(pd));
-    int i;
-    page_directory[0] = (uint32_t)page_table_0;
-    page_directory[768] = (uint32_t)page_table_768;
-    uint32_t *pt = (uint32_t *)(pd[0]);
-    for (i = 0; i < 1024; i++)
-    {
-        page_table_0[i] = pt[i];
-    }
-    pt = (uint32_t *)(pd[768]);
-    for (i = 0; i < 1024; i++)
-    {
-        page_table_768[i] = pt[i];
-    }
+char first_user_elf[8192] = {0};
 
-    __asm__ volatile("mov %0,%%cr3"
-                     :
-                     : "g"((uint32_t)page_directory));
+void test_file()
+{
+    uint8_t buf[1024] = {0};
+    ext2_group_desc gd = {0};
+    ext2_super_block sb = {0};
+
+    read_ext2_super_block(buf);
+    memmove((uint8_t *)&sb, buf, sizeof(ext2_super_block));
+    // print_ext2_super_block(&sb);
+
+    read_ext2_group_desc(buf, &sb, 0);
+    memmove((uint8_t *)&gd, buf, sizeof(ext2_group_desc));
+    // print_ext2_group_desc(&gd);
+
+    read_ext2_group_desc(buf, &sb, 1);
+    memmove((uint8_t *)&gd, buf, sizeof(ext2_group_desc));
+    // print_ext2_group_desc(&gd);
+
+    // read_ext2_group_desc(buf, &sb, 2);
+    // memmove((uint8_t *)&gd, buf, sizeof(ext2_group_desc));
+    // print_ext2_group_desc(&gd);
+
+    ext2_inode root_inode = {0};
+    read_ext2_inode(buf, &sb, EXT2_ROOT_INODE_ID);
+    memmove((uint8_t *)&root_inode, buf, sizeof(ext2_inode));
+    // print_ext2_inode(&root_inode);
+    uint32_t dir_inode = get_inode(&root_inode, "test_dir");
+    // printNumberVar(dir_inode);
+    uint32_t file_inode = get_inode(&root_inode, "a.elf");
+    // printNumberVar(file_inode);
+
+    ext2_inode elf_inode = {0};
+    read_ext2_inode(buf, &sb, file_inode);
+    memmove((uint8_t *)&elf_inode, buf, sizeof(ext2_inode));
+    // print_ext2_inode(&elf_inode);
+
+    read_file(first_user_elf, &elf_inode);
+    // dump_mem(first_user_elf, 32);
+    println("test end");
 }
 
 int main()
@@ -49,6 +69,8 @@ int main()
     init_gdt();
     init_interrupt();
     init_bit_alloc();
+    test_file();
+
     print_str_and_uint32("kernel_end addr", (uint32_t)kernel_end);
     println("into user mode");
     gdt_entry_t *tss_desc_ptr = GET_GDT_DESC(get_gdt_base(), TSS_SEG);
@@ -57,7 +79,8 @@ int main()
     flush_tss();
     // for test
 
-    init_proc(&init_p, 41);
+    // init_proc(&init_p, 41);
+    init_proc_from_buffer(&init_p, first_user_elf);
     test_user_function = init_p.eip;
     user_stack = init_p.esp;
     println("init_proc done");
@@ -74,6 +97,10 @@ int main()
     println("go to user code");
     jump_usermode();
     // end
+
+    while (1)
+        ;
+
     return 0;
 }
 

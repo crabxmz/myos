@@ -5,6 +5,7 @@ gcc ${GCC_OPT} -m32 -ffreestanding  -o x86.o -c x86.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o elf.o -c elf.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o grub.o -c grub.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o disk.o -c disk.c
+gcc ${GCC_OPT} -m32 -ffreestanding  -o string.o -c string.c
 
 echo "link files now..."
 

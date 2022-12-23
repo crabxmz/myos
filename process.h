@@ -14,4 +14,5 @@ typedef struct
 } process_t;
 
 void init_proc(process_t* proc,uint32_t disk_offset);
+void init_proc_from_buffer(process_t *proc, uint8_t *buf);
 #endif

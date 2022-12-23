@@ -39,3 +39,23 @@ int strcmp(const char *a, const char *b)
         return 0;
     }
 }
+
+uint32_t memmove(uint8_t *dst, uint8_t *src, uint32_t len)
+{
+    if (dst < src)
+    {
+        int i;
+        for (i = 0; i < len; i++)
+        {
+            *(dst + i) = *(src + i);
+        }
+    }
+    else if (dst > src)
+    {
+        while (len--)
+        {
+            *(dst + len) = *(src + len);
+        }
+    }
+    return 0;
+}

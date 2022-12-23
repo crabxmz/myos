@@ -45,7 +45,7 @@
 // 3F6 (Write): Device Control Register
 
 uint32_t waitdisk(void);
-uint32_t read_one_sector(uint8_t *buf, uint32_t lab);
-uint32_t write_one_sector(uint8_t *buf, uint32_t lab);
+uint32_t read_one_sector(uint8_t *buf, uint32_t sector_id);
+uint32_t write_one_sector(uint8_t *buf, uint32_t sector_id);
 
 #endif
