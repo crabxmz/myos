@@ -10,6 +10,7 @@
 #include "disk.h"
 #include "ext2.h"
 #include "paging.h"
+#include "mm.h"
 
 extern void jump_usermode();
 uint32_t test_user_function;
@@ -21,7 +22,7 @@ process_t init_p;
 
 char first_user_elf[8192] = {0};
 
-void test_file()
+void read_disk_file_to_buf()
 {
     uint8_t buf[1024] = {0};
     ext2_group_desc gd = {0};
@@ -69,37 +70,32 @@ int main()
     init_gdt();
     init_interrupt();
     init_bit_alloc();
-    test_file();
+
+    read_disk_file_to_buf();
 
     print_str_and_uint32("kernel_end addr", (uint32_t)kernel_end);
-    println("into user mode");
+
+    // init tss
     gdt_entry_t *tss_desc_ptr = GET_GDT_DESC(get_gdt_base(), TSS_SEG);
     set_tss(tss_desc_ptr);
     set_kernel_stack();
     flush_tss();
-    // for test
 
-    // init_proc(&init_p, 41);
+    // init first proc
     init_proc_from_buffer(&init_p, first_user_elf);
+    println("init_proc done");
+    printProcessState(&init_p);
+    printProcessMemSpace(&init_p);
+
+    // set global var for assembly to jump
     test_user_function = init_p.eip;
     user_stack = init_p.esp;
-    println("init_proc done");
-
-    // print_str_and_uint32("user_process_esp", user_stack);
-    // print_str_and_uint32("pt_768", ((uint32_t *)init_p.cr3)[768]);
-    // print_str_and_uint32("pt_0", ((uint32_t *)init_p.cr3)[0]);
-    // print_str_and_uint32("test_user_function", (uint32_t)test_user_function);
-
-    // use new page dir
-    // __asm__ volatile("mov %0, %%cr3" ::"r"(init_p.cr3));
 
     // go to user code
     println("go to user code");
     jump_usermode();
-    // end
 
-    while (1)
-        ;
+    // shouldn't get here
 
     return 0;
 }

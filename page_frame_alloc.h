@@ -3,10 +3,10 @@
 
 #include "memory.h"
 #include "type.h"
+#include "paging.h"
 
 #define BASE_ADDR ((((uint32_t)kernel_end) & 0xfffff000) + 0x1000)
 
-#define PAGE_SIZE (4096)
 #define MSB (31)
 #define TOT_MEM (1u << (MSB))
 #define BOTTOM_NODE_NUM ((TOT_MEM) / (PAGE_SIZE))

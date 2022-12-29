@@ -19,6 +19,8 @@ INPUT(
       string.o
       block.o
       ext2.o
+      list.o
+      mm.o
      )
 
 OUTPUT(kernel.elf)

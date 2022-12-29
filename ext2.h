@@ -43,7 +43,7 @@
 #define EXT2_NAME_LEN 255
 #define EXT2_GET_BLOCK_STATE(bitmap, x) ((bitmap)[x / 8] & (1u << (x % 8)))
 
-#define EXT2_FS_BLKID (25)
+#define EXT2_FS_BLKID (26)
 #define EXT2_FIRST_SB_BLKID (EXT2_BASE_OFFSET / EXT2_BLOCK_SIZE)
 #define EXT2_FIRST_GD_BLKID (EXT2_FIRST_SB_BLKID + 1)
 

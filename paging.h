@@ -1,6 +1,9 @@
 #ifndef PAGING_H
 #define PAGING_H
 #include "type.h"
+
+#define PAGE_SIZE (4096)
+
 #define PD_OFFSET(vaddr) ((vaddr) >> 22)
 #define PT_OFFSET(vaddr) (((vaddr) >> 12) & 0x3ff)
 #define PF_OFFSET(vaddr) ((vaddr)&0xfff)

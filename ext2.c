@@ -169,8 +169,8 @@ uint32_t walk_dir(ext2_inode *inode)
     for (i = 0; i < inode->i_blocks && inode->i_block[i]; i++)
     {
         printNumberVar(i);
-        uint32_t data_blk_id = inode->i_block[i] + EXT2_FS_BLKID;
-        read_blk(buf, data_blk_id);
+        read_ext2_data_block(buf, inode->i_block[i]);
+
         dir = (ext2_dir_entry *)buf;
         int j;
         for (j = 0; j < EXT2_BLOCK_SIZE; j += dir->rec_len)
@@ -191,8 +191,7 @@ uint32_t get_inode(ext2_inode *inode, const char *name) // (parent inode, target
     for (i = 0; i < inode->i_blocks && inode->i_block[i]; i++)
     {
         // printNumberVar(i);
-        uint32_t data_blk_id = inode->i_block[i] + EXT2_FS_BLKID;
-        read_blk(buf, data_blk_id);
+        read_ext2_data_block(buf, inode->i_block[i]);
         dir = (ext2_dir_entry *)buf;
         int j;
         for (j = 0; j < EXT2_BLOCK_SIZE; j += dir->rec_len)

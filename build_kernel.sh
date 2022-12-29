@@ -18,6 +18,8 @@ gcc ${GCC_OPT} -m32 -ffreestanding  -o process.o -c process.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o string.o -c string.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o block.o -c block.c
 gcc ${GCC_OPT} -m32 -ffreestanding  -o ext2.o -c ext2.c
+gcc ${GCC_OPT} -m32 -ffreestanding  -o list.o -c list.c
+gcc ${GCC_OPT} -m32 -ffreestanding  -o mm.o -c mm.c
 
 echo "link files now..."
 

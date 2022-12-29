@@ -2,8 +2,8 @@
 #define BITMAP_ALLOCATOR_H
 #include "memory.h"
 #include "type.h"
+#include "paging.h"
 
-#define PAGE_SIZE (4096)
 #define ADDR_2_SLOT(addr) (addr / PAGE_SIZE / (sizeof(uint8_t) * 8))
 #define ADDR_2_SLOT_OFFSET(addr) ((addr / PAGE_SIZE) % (sizeof(uint8_t) * 8))
 

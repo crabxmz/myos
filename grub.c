@@ -4,11 +4,10 @@
 #include "memory.h"
 #include "elf.h"
 #include "disk.h"
+#include "paging.h"
 
 #define PTD_OFFSET(vaddr) (vaddr >> 22)
 #define PTE_OFFSET(vaddr) ((vaddr >> 12) & 0x3ff)
-#define PF_OFFSET(vaddr) (vaddr & 0xfff)
-#define PAGE_SIZE (4096)
 
 __attribute__((aligned(PAGE_SIZE))) uint32_t page_directory[1024] = {0};
 __attribute__((aligned(PAGE_SIZE))) uint32_t page_table_768[1024] = {0};
