@@ -224,7 +224,7 @@ uint32_t read_file(uint8_t *buf, ext2_inode *inode)
 
     if (inode->i_blocks < EXT2_IND_BLOCK)
     {
-        return;
+        return 0;
     }
 
     if (inode->i_blocks >= EXT2_IND_BLOCK && inode->i_block[EXT2_IND_BLOCK])

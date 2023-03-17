@@ -39,7 +39,7 @@ void set_tss(gdt_entry_t *gdt_entry);
 
 void flush_tss();
 
-__attribute__((always_inline)) inline void set_kernel_stack();
+void set_kernel_stack();
 
 #define TSS_OFFSET_IN_GDT (0x5 * sizeof(gdt_entry_t))
 

@@ -1,7 +1,7 @@
 #include "tss.h"
 #include "x86.h"
 #include "log.h"
-tss_entry_t g_tss_entry={0};
+tss_entry_t g_tss_entry = {0};
 
 // void test_read_disk()
 // {
@@ -45,7 +45,7 @@ void set_tss(gdt_entry_t *gdt_entry_ptr)
     g_tss_entry.ss0 = K_DS_SEG * sizeof(gdt_entry_t); // Set the kernel stack segment, same as ds
 }
 
-__attribute__((always_inline)) inline void set_kernel_stack()
+void set_kernel_stack()
 {
     __asm__ volatile("mov %%esp, %0"
                      : "=g"(g_tss_entry.esp0));

@@ -1,6 +1,7 @@
 #include "kpage_map.h"
 #include "panic.h"
 #include "log.h"
+#include "bitmap_allocator.h"
 
 void map_a_page(uint32_t vaddr, uint32_t paddr, uint8_t u_or_s_bit)
 {

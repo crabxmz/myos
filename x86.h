@@ -6,10 +6,10 @@
 // dummy write to get a 1ms~4ms delay
 void io_wait(void);
 
-__attribute__((always_inline)) inline uint8_t inb(uint16_t port);
-__attribute__((always_inline)) inline uint16_t inw(uint16_t port);
-__attribute__((always_inline)) inline void outb(uint16_t port, uint8_t data);
-__attribute__((always_inline)) inline void outw(uint16_t port, uint16_t data);
+uint8_t inb(uint16_t port);
+uint16_t inw(uint16_t port);
+void outb(uint16_t port, uint8_t data);
+void outw(uint16_t port, uint16_t data);
 
 uint16_t is_interrupt_enabled();
 

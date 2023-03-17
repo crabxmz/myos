@@ -3,7 +3,7 @@
 uint32_t waitdisk(void)
 {
     // Wait for disk ready.
-    while ((inb(0x1F7) & (IDE_BSY | IDE_DRDY)) != IDE_DRDY)
+    while ((inb(IDE_STATUS_REG_R) & (IDE_BSY | IDE_DRDY)) != IDE_DRDY)
         ;
     return 0;
 }

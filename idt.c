@@ -2,6 +2,7 @@
 #include "pic.h"
 #include "bitmap_allocator.h"
 #include "kpage_map.h"
+#include "panic.h"
 
 extern void interrupt_handler_0();
 extern void interrupt_handler_1();

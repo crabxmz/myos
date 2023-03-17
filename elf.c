@@ -105,7 +105,7 @@ uint32_t load_user_elf(uint32_t elf_disk_offset)
     if (src_elf->magic != ELF_MAGIC)
     {
         print_str_and_uint32("not a elf file, magic num", src_elf->magic);
-        return;
+        return 0;
     }
 
     proghdr *src_program_hdr = (proghdr *)((uint8_t *)src_elf + src_elf->phoff);
@@ -157,7 +157,7 @@ uint32_t load_user_elf_from_buffer(uint8_t *buf)
     if (src_elf->magic != ELF_MAGIC)
     {
         print_str_and_uint32("not a elf buf, magic num", src_elf->magic);
-        return;
+        return 0;
     }
 
     proghdr *src_program_hdr = (proghdr *)((uint8_t *)src_elf + src_elf->phoff);

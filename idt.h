@@ -95,5 +95,6 @@ typedef struct
 
 uint32_t get_idt_start_addr();
 void init_interrupt();
+void isr_handler(cpu_state _cpu_state, uint32_t _isr_no, stack_state _stack_state);
 
 #endif

@@ -1,1 +1,1 @@
-gcc -Wl,-Map,output.map -Wl,-entry,test_user_function -Wl,--build-id=none -Wl,-Ttext,0x00400000 -Wno-address-of-packed-member  -fno-pic -nostdlib -nostdinc -fno-builtin -fno-stack-protector -ffreestanding -m32  a.c  log.c x86.c -o a.elf
+gcc -Wl,-Map,output.map -Wl,-entry,test_user_function -Wl,--build-id=none -Wl,-Ttext,0x00400000 -Wno-address-of-packed-member  -fno-pic -nostdlib -nostdinc -fno-builtin -fno-stack-protector -ffreestanding -m32 a.c  log.c x86.c -o a.elf
