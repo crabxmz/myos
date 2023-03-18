@@ -236,7 +236,7 @@ uint32_t read_file(uint8_t *buf, ext2_inode *inode)
         while (*ptr)
         {
             read_ext2_data_block(buf + cnt * EXT2_BLOCK_SIZE, *ptr);
-            cnt++;
+            cnt++, ptr++;
         }
     }
     if (inode->i_blocks >= EXT2_DIND_BLOCK && inode->i_block[EXT2_DIND_BLOCK])
