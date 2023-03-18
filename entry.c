@@ -20,7 +20,7 @@ __attribute__((aligned(PAGE_SIZE))) uint32_t page_table_768[1024] = {0};
 __attribute__((aligned(PAGE_SIZE))) uint32_t page_table_0[1024] = {0};
 process_t init_p;
 
-char first_user_elf[8192] = {0};
+char first_user_elf[1024 * 512] = {0};
 
 void read_disk_file_to_buf()
 {
@@ -72,7 +72,6 @@ int main()
     init_bit_alloc();
 
     read_disk_file_to_buf();
-
     print_str_and_uint32("kernel_end addr", (uint32_t)kernel_end);
 
     // init tss
